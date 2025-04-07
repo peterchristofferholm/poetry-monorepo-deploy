@@ -1,21 +1,23 @@
 from pathlib import Path
 from typing import List, Union
+import os
+import shutil
 
 from cleo.helpers import option
 from cleo.io.inputs.option import Option
 from poetry.console.commands.build import BuildCommand
 from poetry.factory import Factory
+from poetry.core.masonry.builders.builder import Builder
 
 from poetry_monorepo_deploy.components import parsing
 from poetry_monorepo_deploy.components.project import (
     cleanup,
     create,
-    dist,
     packages,
     prepare,
 )
 
-command_name = "build-project"
+command_name = "deploy-project"
 
 
 def create_command_options() -> List[Option]:
@@ -26,12 +28,7 @@ def create_command_options() -> List[Option]:
             long_name="with-top-namespace",
             description="To arrange relative includes, and to modify import statements.",
             flag=False,
-        ),
-        option(
-            long_name="custom-temp-path",
-            description="Temporary path to use for reading, writing and deleting content during the project build.",
-            flag=False,
-        ),
+        )
     ]
 
     return parent + current
@@ -42,16 +39,12 @@ class ProjectBuildCommand(BuildCommand):
 
     options = create_command_options()
 
-    def collect_project(
-        self, path: Path, top_ns: Union[str, None], temp_path: Union[str, None]
-    ) -> Path:
-        destination = prepare.get_destination(path, "prepare", temp_path)
+    def collect_project(self, path: Path, top_ns: Union[str, None]) -> Path:
+        destination = prepare.get_destination(path, "prepare")
 
         prepare.copy_project(path, destination)
         packages.copy_packages(path, destination, top_ns)
-        self.line(
-            f"Copied project & packages into temporary folder <c1>{destination}</c1>"
-        )
+        self.line(f"Copied project and packages into temporary folder <c1>{destination}</c1>")
 
         generated = create.create_new_project_file(path, destination, top_ns)
         self.line(f"Generated <c1>{generated}</c1>")
@@ -73,7 +66,8 @@ class ProjectBuildCommand(BuildCommand):
             was_rewritten = parsing.rewrite_module(module, namespaces, top_ns)
             if was_rewritten:
                 self.line(
-                    f"Updated <c1>{module.parent.name}/{module.name}</c1> with new top namespace for local imports."
+                    f"Updated <c1>{module.parent.name}/{module.name}</c1> "
+                    "with new top namespace for local imports."
                 )
 
     def prepare_for_build(self, path: Path):
@@ -88,22 +82,32 @@ class ProjectBuildCommand(BuildCommand):
 
     def handle(self):
         path = self.poetry.file.path.absolute()
-
         self.line(f"Using <c1>{path}</c1>")
+        self.line(f"Current package: <c1>{self.poetry.package}</c1>")
+        self.line(f"Working directory <c1>{os.getcwd()}</c1>")
 
         top_ns = prepare.normalize_top_namespace(self.option("with-top-namespace"))
-        temp_path = self.option("custom-temp-path")
+        project_path = self.collect_project(path, top_ns)
 
-        project_path = self.collect_project(path, top_ns, temp_path)
+        self.prepare_for_build(project_path.absolute())
 
         if top_ns:
             self.rewrite_modules(project_path, top_ns)
 
-        self.prepare_for_build(project_path.absolute())
+        builder = Builder(poetry=self.poetry)
+        files = builder.find_files_to_add()
 
-        super(ProjectBuildCommand, self).handle()
+        target_dir = Path(self.option("output")) / self.poetry.package.unique_name
+        self.line(f"Target directory <c1>{target_dir}</c1>")
 
-        dist.copy_dist(path, project_path)
+        for file in files:
+            src_path = file.path
+
+            dst_path = target_dir / file.relative_to_project_root()
+            dst_path.parent.mkdir(exist_ok=True, parents=True)
+
+            shutil.copy2(src_path, dst_path)
+        
         self.line("Copied <c1>dist</c1> folder.")
 
         cleanup.remove_project(project_path)

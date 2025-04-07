@@ -17,5 +17,6 @@ class MultiProjectPlugin(ApplicationPlugin):
 
     def activate(self, application: Application):
         application.command_loader.register_factory(
-            project.command_name, project.ProjectBuildCommand
+            project.command_name,
+            project.ProjectBuildCommand,
         )
