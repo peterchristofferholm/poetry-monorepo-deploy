@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Union
 
-from poetry_multiproject_plugin.components.toml import generate, read
+from poetry_monorepo_deploy.components.toml import generate, read
 
 
 def create_new_project_file(

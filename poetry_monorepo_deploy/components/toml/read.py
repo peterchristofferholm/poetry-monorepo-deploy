@@ -4,7 +4,7 @@ from typing import List, Set, Union, cast
 from tomlkit.toml_document import TOMLDocument
 from tomlkit.toml_file import TOMLFile
 
-from poetry_multiproject_plugin.components.toml.packages import join_package_paths
+from poetry_monorepo_deploy.components.toml.packages import join_package_paths
 
 
 def toml(path: Path) -> TOMLDocument:

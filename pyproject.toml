@@ -10,11 +10,11 @@ readme = "README.md"
 packages = [{include = "poetry_monorepo_deploy"}]
 
 [tool.poetry.plugins."poetry.application.plugin"]
-poetry-multiproject-plugin = "poetry_monorepo_deploy:MultiProjectPlugin"
+poetry-monodeploy-plugin = "poetry_monorepo_deploy:MultiProjectPlugin"
 
 [tool.poetry.dependencies]
-python = "^3.8"
-poetry = "*"
+python = "^3.10"
+poetry = "^2.0.0"
 tomlkit = "0.*"
 mypy = "1.*"
 

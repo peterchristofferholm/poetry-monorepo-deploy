@@ -1,8 +1,7 @@
 from poetry.console.application import Application
 from poetry.plugins.application_plugin import ApplicationPlugin
 
-from poetry_multiproject_plugin.commands.buildproject import project
-from poetry_multiproject_plugin.commands.checkproject import check
+from poetry_monorepo_deploy.commands.buildproject import project
 
 
 class MultiProjectPlugin(ApplicationPlugin):
@@ -19,8 +18,4 @@ class MultiProjectPlugin(ApplicationPlugin):
     def activate(self, application: Application):
         application.command_loader.register_factory(
             project.command_name, project.ProjectBuildCommand
-        )
-
-        application.command_loader.register_factory(
-            check.command_name, check.ProjectCheckCommand
         )

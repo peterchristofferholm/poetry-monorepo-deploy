@@ -1,9 +1,9 @@
 from pathlib import Path
 from typing import Union
 
-from poetry_multiproject_plugin.components.toml import read
-from poetry_multiproject_plugin.components.toml.packages import packages_to_paths
-from poetry_multiproject_plugin.components.project import copying
+from poetry_monorepo_deploy.components.toml import read
+from poetry_monorepo_deploy.components.toml.packages import packages_to_paths
+from poetry_monorepo_deploy.components.project import copying
 
 
 def is_relative_path(path: str) -> bool:

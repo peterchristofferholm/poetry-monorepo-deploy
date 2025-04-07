@@ -2,8 +2,8 @@ import re
 from pathlib import Path
 from typing import Union
 
-from poetry_multiproject_plugin.components.project import copying
-from poetry_multiproject_plugin.components.toml import read
+from poetry_monorepo_deploy.components.project import copying
+from poetry_monorepo_deploy.components.toml import read
 
 
 def get_destination_folder(project_file: Path, temp_path: Union[str, None]) -> Path:

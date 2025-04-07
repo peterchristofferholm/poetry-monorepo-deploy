@@ -6,8 +6,8 @@ from cleo.io.inputs.option import Option
 from poetry.console.commands.build import BuildCommand
 from poetry.factory import Factory
 
-from poetry_multiproject_plugin.components import parsing
-from poetry_multiproject_plugin.components.project import (
+from poetry_monorepo_deploy.components import parsing
+from poetry_monorepo_deploy.components.project import (
     cleanup,
     create,
     dist,

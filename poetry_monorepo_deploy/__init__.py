@@ -1,4 +1,4 @@
-from poetry_multiproject_plugin.plugin import MultiProjectPlugin
+from poetry_monorepo_deploy.plugin import MultiProjectPlugin
 
 __version__ = "1.0.4"
 
