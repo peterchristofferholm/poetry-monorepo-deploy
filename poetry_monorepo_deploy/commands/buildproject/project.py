@@ -97,7 +97,7 @@ class ProjectBuildCommand(BuildCommand):
         builder = Builder(poetry=self.poetry)
         files = builder.find_files_to_add()
 
-        target_dir = Path(self.option("output")) / self.poetry.package.unique_name
+        target_dir = Path(self.option("output"))
         self.line(f"Target directory <c1>{target_dir}</c1>")
 
         for file in files:
