@@ -137,7 +137,7 @@ class ProjectBuildCommand(BuildCommand):
             venv,
             parent_poetry.package,
             self.poetry.locker,
-            self.poetry.pool,
+            parent_poetry.pool,
             parent_poetry.config,
         )
         # installer._update = True
